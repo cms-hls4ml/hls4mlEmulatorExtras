@@ -9,6 +9,7 @@ ModelLoader::ModelLoader(std::string model_name)
 }
 
 ModelLoader::~ModelLoader(){
+  if (model_lib_ != nullptr)
     dlclose(model_lib_);
 }
 
