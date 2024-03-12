@@ -4,6 +4,7 @@ using namespace hls4mlEmulator;
 
 ModelLoader::ModelLoader(std::string model_name)
 {
+    model_lib_ = nullptr; // Set to null for defined destructor behavior in case of failed load
     model_name_ = std::move(model_name);
     model_name_.append(".so");
 }
