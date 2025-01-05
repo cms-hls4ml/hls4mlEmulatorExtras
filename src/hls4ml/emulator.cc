@@ -2,23 +2,30 @@
 
 using namespace hls4mlEmulator;
 
-ModelLoader::ModelLoader(std::string model_name)
-{
-    model_lib_ = nullptr; // Set to null for defined destructor behavior in case of failed load
-    model_name_ = std::move(model_name);
-    model_name_.append(".so");
+ModelLoader::ModelLoader(std::string const& model_name)
+  : model_lib_{nullptr},
+    model_name_{model_name} {}
+
+ModelLoader::~ModelLoader() {
+    reset();
 }
 
-ModelLoader::~ModelLoader(){
-  if (model_lib_ != nullptr)
-    dlclose(model_lib_);
+void ModelLoader::reset(std::string const& model_name) {
+    model_name_ = model_name;
+    if (model_lib_ != nullptr) {
+        dlclose(model_lib_);
+        model_lib_ = nullptr;
+    }
 }
 
+std::shared_ptr<Model> ModelLoader::load_model() {
+    if (model_name_.empty()) {
+      throw std::runtime_error("uninitialised model name: failed to load hls4ml emulator model !");
+    }
 
-std::shared_ptr<Model> ModelLoader::load_model()
-{
     //Open the model .so
-    model_lib_ = dlopen(model_name_.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    std::string const model_lib_name = model_name_ + ".so";
+    model_lib_ = dlopen(model_lib_name.c_str(), RTLD_LAZY | RTLD_LOCAL);
     if (!model_lib_) {
         std::cerr << "Cannot load library: " << dlerror() << std::endl;
         throw std::runtime_error("hls4ml emulator model library dlopen failure!");
