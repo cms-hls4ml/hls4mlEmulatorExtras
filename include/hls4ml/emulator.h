@@ -26,7 +26,7 @@ namespace hls4mlEmulator
         void* model_lib_;
 
     public:
-        ModelLoader(std::string model_name);
+        ModelLoader(std::string const& model_name = "");
         ModelLoader(ModelLoader const&) = delete;
         ModelLoader& operator=(ModelLoader const&) = delete;
         //prevent move constructor/assignment
@@ -35,9 +35,12 @@ namespace hls4mlEmulator
         
         ~ModelLoader();
 
+        std::string const& model_name() const { return model_name_; }
+
+        void reset(std::string const& model_name = "");
+
         std::shared_ptr<Model> load_model();
     };
 }
 
 #endif
-

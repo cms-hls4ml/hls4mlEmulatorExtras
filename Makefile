@@ -22,4 +22,4 @@ $(EMULATOR_LIB): src/hls4ml/emulator.cc
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -shared $^ -o $@
 
 clean:
-	rm $(EMULATOR_LIB)
+	rm -f $(EMULATOR_LIB)
