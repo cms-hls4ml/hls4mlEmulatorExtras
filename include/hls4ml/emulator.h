@@ -23,7 +23,7 @@ namespace hls4mlEmulator
     class ModelLoader {
     private:
         std::string model_name_;
-        void* model_lib_;
+        std::shared_ptr<void> model_lib_{nullptr};
 
     public:
         ModelLoader(std::string const& model_name = "");
