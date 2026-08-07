@@ -3,8 +3,7 @@
 using namespace hls4mlEmulator;
 
 ModelLoader::ModelLoader(std::string const& model_name)
-  : model_lib_{nullptr},
-    model_name_{model_name} {}
+  : model_name_{model_name} {}
 
 ModelLoader::~ModelLoader() {
     reset();
@@ -23,7 +22,7 @@ std::shared_ptr<Model> ModelLoader::load_model() {
 
     //Open the model .so
     std::string const model_lib_name = model_name_ + ".so";
-    raw_handle = dlopen(model_lib_name.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    void* raw_handle = dlopen(model_lib_name.c_str(), RTLD_LAZY | RTLD_LOCAL);
     if (!raw_handle) {
         std::cerr << "Cannot load library: " << dlerror() << std::endl;
         throw std::runtime_error("hls4ml emulator model library dlopen failure!");
@@ -37,6 +36,7 @@ std::shared_ptr<Model> ModelLoader::load_model() {
     });
 
     //bind the model .so's "create_model" function to "create_model" so we can make a model later
+    dlerror(); // clear any stale error before checking dlsym below
     create_model_cls* create_model = (create_model_cls*) dlsym(model_lib_.get(), "create_model");
     const char* dlsym_error = dlerror();
     if (dlsym_error) {
@@ -44,6 +44,7 @@ std::shared_ptr<Model> ModelLoader::load_model() {
     }
 
     //bind the model .so's "destroy_model" function to "destroy" so the model can also be destroyed later
+    dlerror(); // clear any stale error before checking dlsym below
     destroy_model_cls* destroy = (destroy_model_cls*) dlsym(model_lib_.get(), "destroy_model");
     dlsym_error = dlerror();
     if (dlsym_error) {

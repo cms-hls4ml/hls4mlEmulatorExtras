@@ -6,6 +6,7 @@
 #include <any>
 #include <dlfcn.h>
 #include <memory>
+#include <stdexcept>
 
 namespace hls4mlEmulator
 {
