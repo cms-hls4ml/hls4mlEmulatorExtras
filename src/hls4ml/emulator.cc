@@ -37,14 +37,14 @@ std::shared_ptr<Model> ModelLoader::load_model() {
     });
 
     //bind the model .so's "create_model" function to "create_model" so we can make a model later
-    create_model_cls* create_model = (create_model_cls*) dlsym(model_lib_, "create_model");
+    create_model_cls* create_model = (create_model_cls*) dlsym(model_lib_.get(), "create_model");
     const char* dlsym_error = dlerror();
     if (dlsym_error) {
         throw std::runtime_error("hls4ml emulator failed to load 'create_model' symbol!");
     }
 
     //bind the model .so's "destroy_model" function to "destroy" so the model can also be destroyed later
-    destroy_model_cls* destroy = (destroy_model_cls*) dlsym(model_lib_, "destroy_model");
+    destroy_model_cls* destroy = (destroy_model_cls*) dlsym(model_lib_.get(), "destroy_model");
     dlsym_error = dlerror();
     if (dlsym_error) {
         throw std::runtime_error("hls4ml emulator failed to load 'destroy_model' symbol!");
